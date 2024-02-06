@@ -71,7 +71,7 @@ ALMRun Base 基本功能
    `ALMRun` 可以直接调用`ALTRun`的配置文件（只需要把`ALTRun`的`ShortCutList.txt`复制到ALMRun目录下即可），所以ALTRun用户可以直接转换过来，但是ALMRun无法管理ALTRun的配置文件，所以如果你经过一段时间的使用，习惯了ALMRun的操作，这时可以把ALTRun的配置导入ALMRun中，快速导入方法如下:  
   
       在命令列表或命令管理器添加一个新的命令，然后在命令中使用浏览操作选择ALTRun的配置文件（`ShortCutList.txt`），再点确定就会弹出一个提示，根据提示进行转换即可，如果你之前已经把`ShortCutList.txt`复制到ALMRun目录下，则需要删除该文件，否则会导致命令重复。
-  
+
 
 *  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
@@ -114,7 +114,7 @@ ALMRun Advanced 扩展功能
 	--其中API就是你要调用的函数，error_hook，是固定的错误提示函数在ALMRun.lua中
 	xpcall(addCommand,error_hook,{ name = "test",cmd = "cmd.exe /k echo test" })
 ```
-   
+
 <h2 id="ALMRun_resource"></h2>
 Resource 相关资源
 ================
@@ -137,27 +137,51 @@ Requirement(编译环境)
 	cmake >= 2.8
 	wxWidgets >=2.9.5
 
-Build 编译方法
+Build 编译方法（以 Visual Studio 2012 为例）
 ===================
-1.  先用下载[wxWidget源码](https://www.wxwidgets.org/downloads/)
+1.  准备 wxWidget 库
+    1.  在 `e:\tools.dev\ProgramTools\Language\C\wxWidgets-3.0.5\` 目录下已经编译好了跟 ALMRun 匹配的静态库版本，可以直接修改 ALMRun 的工程，引用该目录下的 include 和 lib\vc_lib 目录
+    2.  使用源码编译 wxWidget 库
+        1.  先用下载[wxWidget源码](https://www.wxwidgets.org/downloads/)，**注意不要下载 source.zip，要下载官方为编译准备的下载包，否则编译时会因为缺少文件而报错**
+        2.  需要**2.9.5**以上的版本,建议用**3.0.5**版的源码,直接解压到`e:\Workspace\MyProjects\C++\wxWidgets-3.0.5\`目录下
+        3.  然后打开`e:\Workspace\MyProjects\C++\wxWidgets-3.0.5\build\msw\wx_vc11.sln`工程
+        4.  修改 **Release** 和 **Debug** 两个版本的配置：【C/C++ | 代码生成 | 运行库】分别设置为 “多线程(/MT)” 和 “多线程调试(/MTd)”
+        5.  编译 **Release** 和 **Debug** 两个版本.
+        6.  将工程目录下的 include 和 lib 目录拷贝到 `e:\tools.dev\ProgramTools\Language\C\wxWidgets-3.0.5\` 目录下
 
-    需要**2.9.5**以上的版本,建议用**3.0.1**版的源码,直接解压到`d:\dev`目录下,
-    然后打开`D:\dev\wxWidgets-3.0.1\build\msw\wx_vc11.sln`文件编译 **Release** 和 **Debug** 两个版本,直接编译就行了.
+2.  下载安装[cmake](http://www.cmake.org/cmake/resources/software.html)(2.8以上的版本)
 
-2. 下载[cmake](http://www.cmake.org/cmake/resources/software.html)(2.8以上的版本),直接安装.
+3.  修改 ALMRun 源码的 CMakeLists.txt 文件：
+    1.  Line3换成： `set(CMAKE_VS_PLATFORM_TOOLSET v110_xp)` //v110 是 vc 的版本，对应 visual studio 2012
+        Line10 ：`set(WXWIN e:/tools.dev/ProgramTools/Language/C/wxWidgets-3.0.5)` //此处直接定义wxWidgets 所在目录，注意：**斜杠使用 linux 风格**
+        Line57：`elseif(APPLE)` //此处为源码错误
 
-3. 打开命令管理器(CMD.EXE)进入ALMRUN源码目录
+4.  打开命令管理器(CMD.EXE)进入ALMRUN源码目录，执行下面的命令以生成 ALMRun.sln
 ```
 	cd Build
 	cmake ..
 	ALMRun.sln
 ```
 
-以后可以直接打开**ALMRun.sln**修改编译.
+5. 使用 Visual Studio 2012 打开 **ALMRun.sln** 修改下面的配置：
+   - 由于 cmake 的问题，生成的工程中“附加库目录”的斜杠是错误的，**需要修正为 windows 风格**（include的目录却是正确的，故怀疑是 cmake 的问题）
+   - 【 链接器 | 常规 | 附加库目录 】：`e:\Workspace\MyProjects\C++\wxWidgets-3.0.5\lib\vc_lib`
+6. 编译 ALMRun 生成 EXE文件
 
 Download 程序下载
 ===================
 
-ALMRUN最新版本下载： <https://github.com/chenall/ALMRun/releases>
+ALMRUN最新版本下载： <https://github.com/softice70/ALMRun/releases>
 
 其它版本请从 [更新记录] 下载
+
+# TODO
+
+- [x] 修改 windows 10 关机宕机问题
+  - [x] 使用 wxWidgets 3.2.4 版本，貌似没有了宕机问题
+- [x] 支持高分屏
+- [x] 增加搜索软件描述的功能，可以将软件描述扩展为类似tag的用法
+- 增加双击Ctrl为热键的功能
+  - [x] 激活后需要获得输入焦点
+  - [x] 修改双击时间
+  - [x] 支持设置是否打开

@@ -156,7 +156,16 @@ BOOL IsX64()
 BOOL ActiveWindow(HWND hwnd)
 {
 	if (IsIconic(hwnd)) ShowWindow(hwnd, SW_RESTORE);
-	return (BringWindowToTop(hwnd) && SetForegroundWindow(hwnd));
+
+	HWND hForeWnd = ::GetForegroundWindow();
+	DWORD dwCurID = ::GetCurrentThreadId();
+	DWORD dwForeID = ::GetWindowThreadProcessId( hForeWnd, NULL );
+	if(dwCurID != dwForeID)
+		::AttachThreadInput( dwCurID, dwForeID, TRUE);
+	BOOL bRet = BringWindowToTop(hwnd) && SetForegroundWindow(hwnd);
+	if(dwCurID != dwForeID)
+		::AttachThreadInput( dwCurID, dwForeID, FALSE);
+	return bRet;
 }
 
 BOOL CheckActiveProg(DWORD PID)

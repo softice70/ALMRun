@@ -269,6 +269,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 		MerryCommand* command = l_commands[i];
 		assert(command);
 		const wxString& commandName = command->GetCommandName(0);
+		const wxString& commandDesc = command->GetCommandDesc();
 		if (commandName.size() < commandPrefix.size())
 			continue;
 	#ifdef _ALMRUN_CONFIG_H_
@@ -283,6 +284,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 			default:
 	#endif//ifdef _ALMRUN_CONFIG_H_
 				cmp_find = commandName.Upper().find(cmdPrefix);
+				cmp_find = (cmp_find == wxNOT_FOUND)? commandDesc.Upper().find(cmdPrefix): cmp_find;
 				if (cmp_find == wxNOT_FOUND)
 					test_cmp = false;
 				else

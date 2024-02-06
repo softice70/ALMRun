@@ -1,7 +1,38 @@
 #include "MerryApp.h"
 #include <wx/stdpaths.h>
+#include "MerryListBoxPanel.h"
 
 IMPLEMENT_APP(MerryApp)
+
+HHOOK hHook = NULL;
+wxLongLong tmLastPressCtrl = 0;
+const wxLongLong MIN_INTERVAL = 400;
+
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+    if (nCode == HC_ACTION) {
+        KBDLLHOOKSTRUCT* pKeyBoard = (KBDLLHOOKSTRUCT*)lParam;
+        if (wParam == WM_KEYDOWN) {
+			if (pKeyBoard->vkCode != VK_LCONTROL && pKeyBoard->vkCode != VK_RCONTROL && (GetKeyState(VK_CONTROL) & 0x8000)) {
+				tmLastPressCtrl = 0;
+			}
+        }else if (wParam == WM_KEYUP) {
+            if (pKeyBoard->vkCode == VK_LCONTROL || pKeyBoard->vkCode == VK_RCONTROL) {
+				wxLongLong tmCur = wxDateTime::Now().GetValue();
+				wxLongLong tmdiff = tmCur - tmLastPressCtrl;
+				if(tmdiff <= MIN_INTERVAL){
+					const MerryCommand* command = g_commands->GetCommand(0);
+					assert(command);
+					command->Execute(wxEmptyString);
+					tmLastPressCtrl = 0;
+				}else{
+					tmLastPressCtrl = tmCur;
+				}
+            }
+        }
+    }
+    return CallNextHookEx(hHook, nCode, wParam, lParam);
+}
+
 
 bool MerryApp::OnInit()
 {
@@ -30,7 +61,8 @@ bool MerryApp::OnInit()
 		wxDELETE(m_checker);
         return false;
     }
-	    // Create a new server
+	
+	// Create a new server
     m_server = new stServer;
     if (!m_server->Create(IPC_SERVICE))
     {
@@ -68,6 +100,8 @@ bool MerryApp::OnInit()
 	}
 	::wxSetWorkingDirectory(pathTmp);
 	::wxSetEnv(wxT("ALMRUN_SYS"),IsX64()?"x64":"x86");
+	// 用于防止UI自动放大
+	SetProcessDPIAware();
 	//pathTmp.Clear();
 	//volume.Clear();
 	#endif
@@ -75,6 +109,12 @@ bool MerryApp::OnInit()
 	this->NewFrame();
 	assert(m_frame);
 	this->Connect(wxEVT_ACTIVATE_APP,wxObjectEventFunction(&MerryApp::EvtActive));
+	// 注册键盘钩子，截获双击ctrl键的事件
+	#ifdef __WXMSW__
+	if(g_config && g_config->get(DoubleHitCtrl)){
+		hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(NULL), 0);
+	}
+	#endif
 	return true;
 }
 
@@ -105,6 +145,11 @@ int MerryApp::OnExit()
 	{
 		fclose(m_pLogFile);
 		m_pLogFile = NULL;
+	}
+	#endif
+	#ifdef __WXMSW__
+	if(hHook){
+		UnhookWindowsHookEx(hHook);
 	}
 	#endif
 	return 0;

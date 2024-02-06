@@ -256,3 +256,4 @@ void MerryFrame::CentreOnce()
 	this->SetPosition(position);
 	m_isCentred = true;
 }
+
