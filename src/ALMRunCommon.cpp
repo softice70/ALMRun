@@ -162,6 +162,7 @@ BOOL ActiveWindow(HWND hwnd)
 	DWORD dwForeID = ::GetWindowThreadProcessId( hForeWnd, NULL );
 	if(dwCurID != dwForeID)
 		::AttachThreadInput( dwCurID, dwForeID, TRUE);
+	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 	BOOL bRet = BringWindowToTop(hwnd) && SetForegroundWindow(hwnd);
 	if(dwCurID != dwForeID)
 		::AttachThreadInput( dwCurID, dwForeID, FALSE);

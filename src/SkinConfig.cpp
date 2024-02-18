@@ -80,7 +80,7 @@ SkinConfig::SkinConfig()
 		custom[SKINPICTURE].insert(0,"skin/");
 		wxImage img(custom[SKINPICTURE]);
 		if (config[MAIN_WIDTH] == 0)
-			config[MAIN_WIDTH] = img.GetWidth()+1;
+			config[MAIN_WIDTH] = img.GetWidth();
 		if (config[MAIN_HEIGHT] == 0)
 			config[MAIN_HEIGHT] = img.GetHeight()+1;
 		if (config[EDIT_CTRL_TOP] == 0)
