@@ -1,0 +1,59 @@
+[skinvalues]
+;;面板设置
+editleft=22
+edittop=9
+editwidth=430
+editheight=20
+fontsize=13
+;fontbold=1
+fontname=JetBrains Mono
+;主界面背景图片会自动使用这些图片skin_name.png/jpg/bmp,也可以自己指定
+;skinpicture=
+;列表框背景图片,默认skin_name_listbg.png/jpg/bmp
+listpicture=softice-bkg.png
+
+listtop=36
+;listleft=
+;listwidth=
+listfontsize=13
+listmargin=10
+
+;list_border_style=
+list_border_width=0
+
+listfmt= $$┊$n┊$d
+;listfmt列表格式,可以自己随意组合.
+;; $$ 当前显示序号(0-9)                                                    num 
+;; $i 命令的ID号(唯一),正常情况下不需要使用,只作内部识别或调试使用.        id
+;; $n 命令名次(快捷方式名称)                                               name
+;; $d 命令备注信息                                                         desc
+;; $c 命令行,要执行的命令.                                                 cmd
+;; $k 对应命令的热键.                                                      key
+
+;listfmt_xxxx_max 设置限制对应信息的长度默认右对齐,前面加负号"-"左对齐(和C语言的语法一样),其它设置参考上面说面的说明.
+listfmt_num_max=2
+listfmt_key_max=5
+listfmt_name_max=-22
+listfmt_desc_max=-30
+
+;颜色设置
+windowcolor=#8E8E8E
+textcolor=#30FBFF
+textbackcolor=#606060
+;listtextcolor=#8B05AB
+;listtextcolor=#740F74
+;listtextcolor=#4800FF
+;listtextcolor=#149fff
+; 橘色文字
+;listtextcolor=#fb4934
+; 紫色文字
+;listtextcolor=#ae81ff
+; 绿色文字
+listtextcolor=#93c763
+;listtextcolor=#0094FF
+
+listfocusbgcolor=#949494
+;listfocusbgcolor=#3399FB
+listfocustextcolor=#EAEAEA
+;listbackcolor=
+;LISTTITLECOLOR=
