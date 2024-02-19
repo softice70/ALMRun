@@ -188,3 +188,4 @@ ALMRUN最新版本下载： <https://github.com/softice70/ALMRun/releases>
   - [x] 修改双击时间
   - [x] 支持设置是否打开
 - [x] 修正了输入框窗口与列表框窗口宽度不一致的问题
+- [ ] 支持设置窗口宽度

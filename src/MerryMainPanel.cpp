@@ -32,7 +32,10 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 
 	if (!skin->get(SKINPICTURE).empty())
 	{
-		m_background.LoadFile(skin->get(SKINPICTURE), wxBITMAP_TYPE_ANY);
+		// Ö§³Ö±³¾°Í¼ºáÏòÉìËõ
+		wxImage img(skin->get(SKINPICTURE), wxBITMAP_TYPE_ANY);
+		wxSize clientSize = parent->GetClientSize();
+		m_background = img.Scale(clientSize.GetWidth(), img.GetHeight());
 	}
 }
 

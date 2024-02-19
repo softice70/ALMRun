@@ -1,29 +1,32 @@
 #include "MerryApp.h"
 #include <wx/stdpaths.h>
+#include <chrono>
 #include "MerryListBoxPanel.h"
 
 IMPLEMENT_APP(MerryApp)
 
 HHOOK hHook = NULL;
-wxLongLong tmLastPressCtrl = 0;
-const wxLongLong MIN_INTERVAL = 400;
+std::chrono::system_clock::time_point tmLastPressCtrl;
+const double MIN_INTERVAL = 120;
+const double MAX_INTERVAL = 350;
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode == HC_ACTION) {
         KBDLLHOOKSTRUCT* pKeyBoard = (KBDLLHOOKSTRUCT*)lParam;
         if (wParam == WM_KEYDOWN) {
 			if (pKeyBoard->vkCode != VK_LCONTROL && pKeyBoard->vkCode != VK_RCONTROL && (GetKeyState(VK_CONTROL) & 0x8000)) {
-				tmLastPressCtrl = 0;
+				tmLastPressCtrl = std::chrono::system_clock::time_point();
 			}
         }else if (wParam == WM_KEYUP) {
             if (pKeyBoard->vkCode == VK_LCONTROL || pKeyBoard->vkCode == VK_RCONTROL) {
-				wxLongLong tmCur = wxDateTime::Now().GetValue();
-				wxLongLong tmdiff = tmCur - tmLastPressCtrl;
-				if(tmdiff <= MIN_INTERVAL){
+				auto tmCur = std::chrono::high_resolution_clock::now();
+				auto tmdiff = std::chrono::duration_cast<std::chrono::milliseconds>(tmCur - tmLastPressCtrl);
+				auto diffVal = tmdiff.count();
+				if(diffVal > MIN_INTERVAL && diffVal < MAX_INTERVAL){
 					const MerryCommand* command = g_commands->GetCommand(0);
 					assert(command);
 					command->Execute(wxEmptyString);
-					tmLastPressCtrl = 0;
+					tmLastPressCtrl = std::chrono::system_clock::time_point();
 				}else{
 					tmLastPressCtrl = tmCur;
 				}

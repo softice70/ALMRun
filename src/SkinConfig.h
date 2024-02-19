@@ -14,6 +14,7 @@ const int		MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM = 10;
 typedef enum _skin_config
 {
 	SHOW_WINDOW,
+	MAIN_WIDTH,
 	FONT_SIZE,
 	FONT_BOLD,
 	EDIT_CTRL_LEFT,
@@ -47,7 +48,6 @@ typedef enum _skin_config
 
 	LIST_ITEM_HEIGHT,
 	LIST_ITEM_MAX,
-	MAIN_WIDTH,
 	MAIN_HEIGHT,
 	SKIN_TYPE,
 	SKIN_CONFIG_MAX,

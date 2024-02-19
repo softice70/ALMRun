@@ -34,8 +34,10 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 
 	if (!listpicture.empty())
 	{
-		bool isOk = m_listBackground.LoadFile(skin->get(LISTPICTURE), wxBITMAP_TYPE_ANY);
-		assert(isOk);
+		// Ö§³Ö±³¾°Í¼ºáÏòÉìËõ
+		wxImage img(skin->get(LISTPICTURE), wxBITMAP_TYPE_ANY);
+		wxSize clientSize = parent->GetClientSize();
+		m_listBackground = wxBitmap(img.Scale(clientSize.GetWidth(), img.GetHeight()));
 	}
 
 	this->SetOwnForegroundColour(skin->get(LIST_TEXT_COLOR));
